@@ -14,9 +14,12 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
+import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -82,6 +85,20 @@ public record BeaconListener(BeaconWarp beaconWarp) implements Listener {
         }
         player.closeInventory();
         player.teleport(warp.get().clone().add(0, 1, 0));
+    }
+
+    @EventHandler
+    public void onJoin(PlayerJoinEvent playerJoinEvent) {
+        this.beaconWarp.getPlayerFactory().playerJoin(playerJoinEvent.getPlayer());
+    }
+
+    @EventHandler
+    public void onQuit(PlayerQuitEvent playerQuitEvent) {
+        try {
+            this.beaconWarp.getPlayerFactory().playerQuit(playerQuitEvent.getPlayer());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private ItemStack createWarp(WarpFactory.WarpData warpData) {
