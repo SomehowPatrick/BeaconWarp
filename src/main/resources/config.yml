@@ -1,16 +1,38 @@
+config:
+
+
 # set your warps here
 warps:
-#  - "example"
+  - "example"
+  - "example_1"
+  - "spawn"
 
 # configure your warps here
-#data:
-#  example:
-#    location:
-#        ==: org.bukkit.Location
-#        world: world
-#        x: -138.5
-#        y: 69.0
-#        z: 111.5
-#        pitch: 10.650007
-#        yaw: 162.00003
-#    material: GLASS
+data:
+  example:
+    location:
+        ==: org.bukkit.Location
+        world: world
+        x: -138
+        y: 69
+        z: 111
+    material: GLASS
+    name: "&aExample location"
+  example_1:
+    location:
+      ==: org.bukkit.Location
+      world: world
+      x: -138
+      y: 69
+      z: 120
+    material: GRASS
+    name: "&aExample location 2"
+  spawn:
+    location:
+      ==: org.bukkit.Location
+      world: world
+      x: -138
+      y: 69
+      z: 130
+    material: GRASS
+    name: "&e&lSpawn"

@@ -1,6 +1,7 @@
 package com.github.unknownbanana.beaconwarp.warp;
 
 import com.github.unknownbanana.beaconwarp.exception.ConfigParseException;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -29,7 +30,12 @@ public class WarpFactory {
                 if (location == null) {
                     throw new ConfigParseException("The location for warp " + warp + " is not available!");
                 }
-                this.warps.add(new WarpData(warp, material, location));
+                var name = yamlConfiguration.getString("data." + warp + ".name");
+                if (name == null) {
+                    throw new ConfigParseException("The name for warp " + warp + " is not available!");
+                }
+                name = ChatColor.translateAlternateColorCodes('&', name);
+                this.warps.add(new WarpData(warp, name, material, location));
             } catch (ConfigParseException configParseException) {
                 configParseException.printStackTrace();
             }
@@ -54,6 +60,10 @@ public class WarpFactory {
         return locations;
     }
 
-    public record WarpData(String name, Material warpMaterial, Location destination) {
+    public List<WarpData> getWarpData() {
+        return this.warps;
+    }
+
+    public record WarpData(String identifier, String name, Material warpMaterial, Location destination) {
     }
 }
