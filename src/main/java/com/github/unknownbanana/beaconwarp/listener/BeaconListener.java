@@ -1,7 +1,7 @@
 package com.github.unknownbanana.beaconwarp.listener;
 
 import com.github.unknownbanana.beaconwarp.BeaconWarp;
-import com.github.unknownbanana.beaconwarp.warp.WarpFactory;
+import com.github.unknownbanana.beaconwarp.factories.WarpFactory;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.TextColor;
@@ -16,7 +16,6 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.util.Vector;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
@@ -82,9 +81,7 @@ public record BeaconListener(BeaconWarp beaconWarp) implements Listener {
             return;
         }
         player.closeInventory();
-        var location = warp.get().clone();
-        location.add(0, 1, 0);
-        player.teleport(location);
+        player.teleport(warp.get().clone().add(0, 1, 0));
     }
 
     private ItemStack createWarp(WarpFactory.WarpData warpData) {

@@ -1,4 +1,4 @@
-package com.github.unknownbanana.beaconwarp.warp;
+package com.github.unknownbanana.beaconwarp.factories;
 
 import com.github.unknownbanana.beaconwarp.exception.ConfigParseException;
 import org.bukkit.ChatColor;
@@ -13,12 +13,13 @@ import java.util.concurrent.atomic.AtomicReference;
 public class WarpFactory {
     private final List<WarpData> warps;
 
-    public WarpFactory() {
-        this.warps = new ArrayList<>();
+    protected WarpFactory(List<WarpData> warps) {
+        this.warps = warps;
     }
 
-    public WarpFactory loadDataFromFile(YamlConfiguration yamlConfiguration) {
+    public static WarpFactory loadDataFromFile(YamlConfiguration yamlConfiguration) {
         var warps = yamlConfiguration.getStringList("warps");
+        var warpData = new ArrayList<WarpData>();
 
         warps.forEach(warp -> {
             try {
@@ -35,13 +36,12 @@ public class WarpFactory {
                     throw new ConfigParseException("The name for warp " + warp + " is not available!");
                 }
                 name = ChatColor.translateAlternateColorCodes('&', name);
-                this.warps.add(new WarpData(warp, name, material, location));
+                warpData.add(new WarpData(warp, name, material, location));
             } catch (ConfigParseException configParseException) {
                 configParseException.printStackTrace();
             }
         });
-
-        return this;
+        return new WarpFactory(warpData);
     }
 
     public WarpData getWarpByName(String name) {
