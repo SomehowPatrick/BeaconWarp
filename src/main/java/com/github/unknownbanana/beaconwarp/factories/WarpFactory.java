@@ -8,6 +8,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Factory record responsible for storing the warps
@@ -31,7 +32,7 @@ public record WarpFactory(List<WarpData> warps,
     public static WarpFactory loadDataFromFile(YamlConfiguration yamlConfiguration) {
         var warps = yamlConfiguration.getStringList("warps");
         var warpData = new ArrayList<WarpData>();
-        var warpMessage = "";
+        AtomicReference<String> warpMessage = new AtomicReference<>("");
 
         warps.forEach(warp -> {
             try {
@@ -52,12 +53,17 @@ public record WarpFactory(List<WarpData> warps,
                 if (slot > 26) {
                     throw new ConfigParseException("The slot " + slot + " is not supported for an inventory of size 27 slots");
                 }
+                var message = yamlConfiguration.getString("config.message");
+                if (message == null) {
+                    throw new ConfigParseException("The message in the config is not set!");
+                }
+                warpMessage.set(ChatColor.translateAlternateColorCodes('&', message));
                 warpData.add(new WarpData(warp, name, material, location, slot));
             } catch (ConfigParseException configParseException) {
                 configParseException.printStackTrace();
             }
         });
-        return new WarpFactory(warpData, warpMessage);
+        return new WarpFactory(warpData, warpMessage.get());
     }
 
     /**
@@ -75,6 +81,8 @@ public record WarpFactory(List<WarpData> warps,
     public List<WarpData> getWarpData() {
         return this.warps;
     }
+
+
 
     /**
      * Data class holding informations about a warp

@@ -118,7 +118,7 @@ public record BeaconListener(BeaconWarp beaconWarp) implements Listener {
         warps.forEach(data -> {
             if (data.destination().distance(playerMoveEvent.getPlayer().getLocation()) <= DISCOVERY_RADIUS) {
                 if (!this.beaconWarp.getPlayerFactory().hasWarpDiscovered(playerMoveEvent.getPlayer(), data.identifier())) {
-                    playerMoveEvent.getPlayer().sendMessage(Component.text("You got a new Warp " + data.name()));
+                    playerMoveEvent.getPlayer().sendMessage(Component.text(this.beaconWarp.getWarpFactory().warpMessage().replace("%warp", data.name())));
                     this.beaconWarp.getPlayerFactory().discoverWarp(playerMoveEvent.getPlayer(), data.identifier());
                 }
             }
