@@ -1,0 +1,16 @@
+# set your warps here
+warps:
+#  - "example"
+
+# configure your warps here
+#data:
+#  example:
+#    location:
+#        ==: org.bukkit.Location
+#        world: world
+#        x: -138.5
+#        y: 69.0
+#        z: 111.5
+#        pitch: 10.650007
+#        yaw: 162.00003
+#    material: GLASS

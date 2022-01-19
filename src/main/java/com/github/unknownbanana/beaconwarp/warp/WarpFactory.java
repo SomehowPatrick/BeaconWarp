@@ -2,8 +2,8 @@ package com.github.unknownbanana.beaconwarp.warp;
 
 import com.github.unknownbanana.beaconwarp.exception.ConfigParseException;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,8 +21,8 @@ public class WarpFactory {
 
         warps.forEach(warp -> {
             try {
-                var material = yamlConfiguration.getItemStack("data." + warp + ".material");
-                if (material == null) {
+                var material = Material.valueOf(yamlConfiguration.getString("data." + warp + ".material"));
+                if (material == Material.AIR) {
                     throw new ConfigParseException("The material for warp " + warp + " is not available!");
                 }
                 var location = yamlConfiguration.getLocation("data." + warp + ".location");
@@ -48,6 +48,12 @@ public class WarpFactory {
         return warpData.get();
     }
 
-    public record WarpData(String name, ItemStack warpMaterial, Location destination) {
+    public List<Location> getWarpLocation() {
+        List<Location> locations = new ArrayList<>();
+        this.warps.forEach(warp -> locations.add(warp.destination));
+        return locations;
+    }
+
+    public record WarpData(String name, Material warpMaterial, Location destination) {
     }
 }
