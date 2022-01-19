@@ -82,9 +82,6 @@ public record BeaconListener(BeaconWarp beaconWarp) implements Listener {
             return;
         }
         player.closeInventory();
-        //var location = warp.get();
-        //location.add(0, 1, 0);
-        //player.teleport(location);
         var location = warp.get().clone();
         location.add(0, 1, 0);
         player.teleport(location);
