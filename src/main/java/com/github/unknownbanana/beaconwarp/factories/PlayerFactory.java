@@ -43,6 +43,10 @@ public class PlayerFactory {
         this.playerData.put(player, data);
     }
 
+    public boolean hasWarpDiscovered(Player player, String name) {
+        return this.playerData.get(player).contains(name);
+    }
+
     public List<String> getWarps(Player player) {
         if (this.playerData.containsKey(player)) {
             return this.playerData.get(player);

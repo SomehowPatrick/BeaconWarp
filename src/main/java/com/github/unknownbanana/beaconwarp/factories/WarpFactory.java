@@ -12,14 +12,17 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class WarpFactory {
     private final List<WarpData> warps;
+    private final String warpMessage;
 
-    protected WarpFactory(List<WarpData> warps) {
+    protected WarpFactory(List<WarpData> warps, String warpMessage) {
         this.warps = warps;
+        this.warpMessage = warpMessage;
     }
 
     public static WarpFactory loadDataFromFile(YamlConfiguration yamlConfiguration) {
         var warps = yamlConfiguration.getStringList("warps");
         var warpData = new ArrayList<WarpData>();
+        var warpMessage = "";
 
         warps.forEach(warp -> {
             try {
@@ -36,12 +39,16 @@ public class WarpFactory {
                     throw new ConfigParseException("The name for warp " + warp + " is not available!");
                 }
                 name = ChatColor.translateAlternateColorCodes('&', name);
-                warpData.add(new WarpData(warp, name, material, location));
+                var slot = yamlConfiguration.getInt("data." + warp + ".slot");
+                if (slot > 26) {
+                    throw new ConfigParseException("The slot " + slot + " is not supported for an inventory of size 27 slots");
+                }
+                warpData.add(new WarpData(warp, name, material, location, slot));
             } catch (ConfigParseException configParseException) {
                 configParseException.printStackTrace();
             }
         });
-        return new WarpFactory(warpData);
+        return new WarpFactory(warpData, warpMessage);
     }
 
     public WarpData getWarpByName(String name) {
@@ -64,6 +71,6 @@ public class WarpFactory {
         return this.warps;
     }
 
-    public record WarpData(String identifier, String name, Material warpMaterial, Location destination) {
+    public record WarpData(String identifier, String name, Material warpMaterial, Location destination, int slot) {
     }
 }

@@ -2,6 +2,7 @@ package com.github.unknownbanana.beaconwarp.listener;
 
 import com.github.unknownbanana.beaconwarp.BeaconWarp;
 import com.github.unknownbanana.beaconwarp.factories.WarpFactory;
+import io.papermc.paper.event.server.ServerResourcesReloadedEvent;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.TextColor;
@@ -15,6 +16,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -25,6 +27,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public record BeaconListener(BeaconWarp beaconWarp) implements Listener {
     public static final TextComponent INVENTORY_TITLE = Component.text("Test").color(TextColor.color(100000));
+    public static final double DISCOVERY_RADIUS = 5;
 
     @EventHandler
     public void onBeaconOpen(PlayerInteractEvent event) {
@@ -46,8 +49,8 @@ public record BeaconListener(BeaconWarp beaconWarp) implements Listener {
         Inventory inventory = Bukkit.createInventory(null, InventoryType.CHEST, INVENTORY_TITLE);
         var warpData = this.beaconWarp.getWarpFactory().getWarpData();
         warpData.forEach(warp -> {
-            if (!warp.destination().equals(event.getClickedBlock().getLocation())) {
-                inventory.addItem(createWarp(warp));
+            if (!warp.destination().equals(event.getClickedBlock().getLocation()) && this.beaconWarp.getPlayerFactory().hasWarpDiscovered(event.getPlayer(), warp.identifier())) {
+                inventory.setItem(warp.slot(), createWarp(warp));
             }
         });
         event.setCancelled(true);
@@ -99,6 +102,19 @@ public record BeaconListener(BeaconWarp beaconWarp) implements Listener {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @EventHandler
+    public void onMove(PlayerMoveEvent playerMoveEvent) {
+        var warps = this.beaconWarp.getWarpFactory().getWarpData();
+        warps.forEach(data -> {
+            if (data.destination().distance(playerMoveEvent.getPlayer().getLocation()) <= DISCOVERY_RADIUS) {
+                if (!this.beaconWarp.getPlayerFactory().hasWarpDiscovered(playerMoveEvent.getPlayer(), data.identifier())) {
+                    playerMoveEvent.getPlayer().sendMessage(Component.text("You got a new Warp " + data.name()));
+                    this.beaconWarp.getPlayerFactory().discoverWarp(playerMoveEvent.getPlayer(), data.identifier());
+                }
+            }
+        });
     }
 
     private ItemStack createWarp(WarpFactory.WarpData warpData) {
