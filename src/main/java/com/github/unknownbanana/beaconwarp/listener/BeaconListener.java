@@ -2,7 +2,6 @@ package com.github.unknownbanana.beaconwarp.listener;
 
 import com.github.unknownbanana.beaconwarp.BeaconWarp;
 import com.github.unknownbanana.beaconwarp.factories.WarpFactory;
-import io.papermc.paper.event.server.ServerResourcesReloadedEvent;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.TextColor;
@@ -24,6 +23,15 @@ import org.bukkit.inventory.ItemStack;
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
+
+/**
+ * Listener recored responsible for working with listeners
+ * and providing the warps and beacons
+ *
+ * @author UnknownBanana
+ * @version 1.0
+ * @since 1.0
+ */
 
 public record BeaconListener(BeaconWarp beaconWarp) implements Listener {
     public static final TextComponent INVENTORY_TITLE = Component.text("Test").color(TextColor.color(100000));
@@ -116,6 +124,13 @@ public record BeaconListener(BeaconWarp beaconWarp) implements Listener {
             }
         });
     }
+
+    /**
+     * Creates a new warp itemstack
+     *
+     * @param warpData The data used to construct the warp item
+     * @return An itemstack of the data
+     */
 
     private ItemStack createWarp(WarpFactory.WarpData warpData) {
         var itemStack = new ItemStack(warpData.warpMaterial());

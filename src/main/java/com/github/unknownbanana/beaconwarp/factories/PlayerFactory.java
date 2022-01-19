@@ -10,6 +10,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Factory class responsible for loading player data in and from memory
+ * for quicker access to the data
+ *
+ * @author UnknownBanana
+ * @version 1.0
+ * @since 1.0
+ */
 public class PlayerFactory {
     private final Map<Player, List<String>> playerData;
 
@@ -22,6 +30,12 @@ public class PlayerFactory {
         this.yamlConfiguration = YamlConfiguration.loadConfiguration(this.file);
     }
 
+    /**
+     * Loads data into memory
+     *
+     * @param player The player to load data of
+     */
+
     public void playerJoin(Player player) {
         var list = this.yamlConfiguration.getStringList("data." + player.getUniqueId());
         if (!list.isEmpty()) {
@@ -30,6 +44,13 @@ public class PlayerFactory {
         }
         this.playerData.put(player, new ArrayList<>());
     }
+
+    /**
+     * Removes data from memory and saves it to the data file
+     *
+     * @param player The player to remove data of
+     * @throws IOException Because of {@link YamlConfiguration#save(File)}
+     */
 
     public void playerQuit(Player player) throws IOException {
         this.yamlConfiguration.set("data." + player.getUniqueId(), this.playerData.get(player));
@@ -43,9 +64,24 @@ public class PlayerFactory {
         this.playerData.put(player, data);
     }
 
+    /**
+     * Checks if a player has a warp with a specific identifier discovered
+     *
+     * @param player The player to check
+     * @param name   The identifier to use
+     * @return If the warp has been discovered by the player
+     */
+
     public boolean hasWarpDiscovered(Player player, String name) {
         return this.playerData.get(player).contains(name);
     }
+
+    /**
+     * Returns a list of all warps a player has discovered
+     *
+     * @param player The player to use
+     * @return A list off all warps a player has discovered
+     */
 
     public List<String> getWarps(Player player) {
         if (this.playerData.containsKey(player)) {

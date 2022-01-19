@@ -8,7 +8,14 @@ import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.File;
+/**
+ * Main entrypoint of the plugin
+ *
+ * @author UnknownBanana
+ * @version 1.0
+ * @see JavaPlugin
+ * @since 1.0
+ */
 
 public class BeaconWarp extends JavaPlugin {
     private WarpFactory warpFactory;

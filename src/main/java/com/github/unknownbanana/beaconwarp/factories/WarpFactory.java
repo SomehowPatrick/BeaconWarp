@@ -8,16 +8,25 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 
-public class WarpFactory {
-    private final List<WarpData> warps;
-    private final String warpMessage;
+/**
+ * Factory record responsible for storing the warps
+ * in memory and providing methods for accessing them
+ *
+ * @author UnknownBanana
+ * @version 1.0
+ * @since 1.0
+ */
 
-    protected WarpFactory(List<WarpData> warps, String warpMessage) {
-        this.warps = warps;
-        this.warpMessage = warpMessage;
-    }
+public record WarpFactory(List<WarpData> warps,
+                          String warpMessage) {
+
+    /**
+     * Factory method loading the warps from a config file
+     *
+     * @param yamlConfiguration The config file
+     * @return An instance of the WarpFactory class
+     */
 
     public static WarpFactory loadDataFromFile(YamlConfiguration yamlConfiguration) {
         var warps = yamlConfiguration.getStringList("warps");
@@ -51,15 +60,11 @@ public class WarpFactory {
         return new WarpFactory(warpData, warpMessage);
     }
 
-    public WarpData getWarpByName(String name) {
-        AtomicReference<WarpData> warpData = new AtomicReference<>(null);
-        this.warps.forEach(warp -> {
-            if (warp.name.equalsIgnoreCase(name)) {
-                warpData.set(warp);
-            }
-        });
-        return warpData.get();
-    }
+    /**
+     * Returns a list of all warps
+     *
+     * @return A list of all warps
+     */
 
     public List<Location> getWarpLocation() {
         List<Location> locations = new ArrayList<>();
@@ -70,6 +75,10 @@ public class WarpFactory {
     public List<WarpData> getWarpData() {
         return this.warps;
     }
+
+    /**
+     * Data class holding informations about a warp
+     */
 
     public record WarpData(String identifier, String name, Material warpMaterial, Location destination, int slot) {
     }
